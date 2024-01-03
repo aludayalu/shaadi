@@ -335,13 +335,28 @@ const AudioPlayer = (url, open, setOpen)=>{
         <>
         <Modal
         open={open}
-        css={{zIndex:999999999999999999999}}
+        css={{zIndex:999999999999999999999,padding:"5vw", width:"500px"}}
         onClose={()=>{
             setOpen(false)
         }}
         >
-        <div className="wrapper" style={{padding:"5vw", width:"500px"}}>
-            <audio src={url} controls></audio>
+        <div className="wrapper">
+            <div>
+                <div className="wrapper">
+                <audio src={url} controls id="playing audio"></audio>
+                </div>
+                <Spacer></Spacer>
+                <div className="wrapper">
+                <Button onClick={()=>{
+                    var audio=document.getElementById("playing audio")
+                    if (!document.getElementById("playing audio").paused) {
+                        audio.pause()
+                    } else {
+                        audio.play()
+                    }
+                }}><Text color="black">Toggle Playing</Text></Button>
+                </div>
+            </div>
         </div>
         </Modal>
         </>
