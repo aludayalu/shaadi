@@ -7,7 +7,7 @@ import axios from "axios";
 import React from "react"
 
 
-const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, SetAvailableSongs, setGroup, songs, SetEditingSong, group) => {
+const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, SetAvailableSongs, setGroup, songs, SetEditingSong, group, playing_url, setPlayingUrl, playing, setPlaying) => {
     return (
         <>
         <Card css={{p:"$5", bgBlur:"$backgroundAlpha", border:"1px solid white", width:"400px"}} isPressable isHoverable onClick={()=>{
@@ -71,14 +71,14 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                     if (index===-1) {
                         index=group.songs.length-1
                     }
-                    if (currently_playing!==name) {
-                        SetCurrentlyPlaying(name)
-                        SetEditingSong({visibility:false, song:{"name":"", "start":0, "stop":0, "fade_in":0, "fade_out":0}, playing: false})
-                        setTimeout(SetEditingSong({visibility:false, song:{"name":name, "start":group.songs[index].start, "stop":group.songs[index].stop, "fade_in":group.songs[index].fade_in, "fade_out":group.songs[index].fade_out}, playing: true}), 100)
-                    } else {
-                        SetCurrentlyPlaying("")
-                        setTimeout(SetEditingSong({visibility:false, song:{"name":name, "start":group.songs[index].start, "stop":group.songs[index].stop, "fade_in":group.songs[index].fade_in, "fade_out":group.songs[index].fade_out}, playing: false}), 100)
+                    if (playing_url!=="") {
+                        setPlayingUrl("")
+                        setPlaying(false)
                     }
+                    setTimeout(()=>{
+                        setPlaying(true)
+                        setPlayingUrl(data.api_url+"/song?song="+group.songs[index].name+".mp3")
+                    })
                 }}><Text>{currently_playing==name ? "Pause" : "Play"}</Text></Button></div>
             </Card.Header>
         </Card>
@@ -88,6 +88,8 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
 
 export default function Home() {
     const router=useRouter()
+    const [playing_url, setPlayingUrl]=useState("")
+    const [playing, setPlaying]=useState(false)
     const [groupname, setGroupName]=useState("")
     const [uploading_song, SetUploadingSong]=useState(false)
     const [available_songs, SetAvailableSongs]=useState([])
@@ -130,6 +132,7 @@ export default function Home() {
     if (JSON.stringify(group)!=="{}" && groupname!=="")
     return (
         <>
+        {AudioPlayer(playing_url, playing, setPlaying)}
             <Head>
                 <title></title>
             </Head>
@@ -235,7 +238,7 @@ export default function Home() {
                         }
                         return (
                             <>
-                            {Music(x.name, index, currently_playing, SetCurrentlyPlaying, groupname, SetAvailableSongs, setGroup, songs, SetEditingSong, group)}
+                            {Music(x.name, index, currently_playing, SetCurrentlyPlaying, groupname, SetAvailableSongs, setGroup, songs, SetEditingSong, group, playing_url, setPlayingUrl, playing, setPlaying)}
                             <Spacer></Spacer>
                             </>
                         )
@@ -262,18 +265,17 @@ export default function Home() {
             </Modal.Body>
             <Modal.Footer>
                 <Button color={"success"} onClick={()=>{
-                    var ed=editing_song
-                    ed.playing=!ed.playing
-                    ed.song.start=Number(document.getElementById("start").value)
-                    ed.song.stop=Number(document.getElementById("stop").value)
-                    ed.song.fade_in=Number(document.getElementById("fadein").value)
-                    ed.song.fade_out=Number(document.getElementById("fadeout").value)
-                    SetEditingSong(ed)
-                    if (editing_song.song.name===currently_playing) {
-                        SetCurrentlyPlaying("")
-                    } else {
-                        SetCurrentlyPlaying(editing_song.song.name)
-                    }
+                    var start=(document.getElementById("start").value)
+                    var stop=(document.getElementById("stop").value)
+                    var fade_in=(document.getElementById("fadein").value)
+                    var fade_out=(document.getElementById("fadeout").value)
+                    setSaving(true)
+                    var random=Math.random().toString()
+                    axios.get(data.api_url+"/set_song?song="+editing_song.song.name+"_original"+"&group="+groupname+"&fadein="+fade_in+"&fadeout="+fade_out+"&start="+start+"&stop="+stop+"&out="+editing_song.song.name+"sothiswasedited"+random).then((x)=>{
+                        setSaving(false)
+                        setPlayingUrl(data.api_url+"/song?song="+editing_song.song.name+"sothiswasedited"+random+".mp3")
+                        setPlaying(true)
+                    })
                 }} id="aoishf">{editing_song.song.name===currently_playing ? "Pause" : "Preview"}</Button>
                 {saving ? <Loading></Loading> : ""}
                 {saving ? "" : <Button onClick={()=>{
@@ -282,7 +284,7 @@ export default function Home() {
                     var stop=(document.getElementById("stop").value)
                     var fade_in=(document.getElementById("fadein").value)
                     var fade_out=(document.getElementById("fadeout").value)
-                    axios.get(data.api_url+"/set_song?song="+editing_song.song.name+"&group="+groupname+"&fadein="+fade_in+"&fadeout="+fade_out+"&start="+start+"&stop="+stop).then((x)=>{
+                    axios.get(data.api_url+"/set_song?song="+editing_song.song.name+"_original"+"&group="+groupname+"&fadein="+fade_in+"&fadeout="+fade_out+"&start="+start+"&stop="+stop+"&out="+editing_song.song.name).then((x)=>{
                         axios.get(data.api_url+"/group?group="+groupname).then((x)=>{
                             setGroup(x.data)
                             var y=x.data
@@ -324,79 +326,24 @@ export default function Home() {
                 }}>Remove</Button>
             </Modal.Footer>
             </Modal>
-            {editing_song.playing ? <AudioPlayer src={data.api_url+"/song?song="+editing_song.song.name+".mp3"} fadeInDuration={editing_song.song.fade_in} fadeOutDuration={editing_song.song.fade_out} startTime={editing_song.song.start} endTime={editing_song.song.stop}></AudioPlayer> : ""}
         </> 
     )
 }
 
-const AudioPlayer = ({ src, fadeInDuration, fadeOutDuration, startTime, endTime }) => {
-    const audioContext = useRef(null);
-    const audioRef = useRef(null);
-  
-    useEffect(() => {
-      const initAudio = async () => {
-        // Initialize AudioContext only once
-        if (!audioContext.current) {
-          audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
-        }
-  
-        // Create a new audio element for each playback
-        const audio = new Audio();
-        audioRef.current = audio;
-  
-        // Set crossOrigin attribute for both audio and media source node
-        audio.crossOrigin = 'anonymous';
-  
-        // Create audio nodes
-        const source = audioContext.current.createMediaElementSource(audio);
-        const gainNode = audioContext.current.createGain();
-  
-        source.connect(gainNode);
-        gainNode.connect(audioContext.current.destination);
-  
-        // Set initial volume to 0
-        gainNode.gain.setValueAtTime(0, audioContext.current.currentTime);
-  
-        // Fade in
-        gainNode.gain.linearRampToValueAtTime(1, audioContext.current.currentTime + fadeInDuration);
-  
-        // Start playing at the specified start time
-        audio.src = src;
-        audio.currentTime = startTime;
-  
-        // Schedule the end of playback
-        audio.addEventListener('ended', () => {
-          // Fade out
-          gainNode.gain.linearRampToValueAtTime(0, audioContext.current.currentTime + fadeOutDuration);
-        });
-  
-        // Play the audio
-        try {
-          await audio.play();
-        } catch (error) {
-          console.error('Error initiating playback:', error);
-        }
-  
-        // Stop playback at the specified end time
-        setTimeout(() => {
-          if (!audio.paused) {
-            audio.pause();
-            audio.currentTime = 0;
-          }
-        }, (endTime - startTime) * 1000);
-      };
-  
-      // Call the function to initialize and play audio
-      initAudio();
-  
-      // Cleanup on component unmount
-      return () => {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-        }
-      };
-    }, [src, fadeInDuration, fadeOutDuration, startTime, endTime]);
-  
-    return null; // Since this is a utility component
-  };
+const AudioPlayer = (url, open, setOpen)=>{
+    return (
+        <>
+        <Modal
+        open={open}
+        css={{zIndex:999999999999999999999}}
+        onClose={()=>{
+            setOpen(false)
+        }}
+        >
+        <div className="wrapper">
+            <audio src={url} controls></audio>
+        </div>
+        </Modal>
+        </>
+    )
+}
