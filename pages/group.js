@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Text, Link, Navbar, Spacer, Divider, Button, Card, Modal, Dropdown, Loading, Input} from "@nextui-org/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router"
 import data from "../props/data.json"
 import axios from "axios";
@@ -329,68 +329,74 @@ export default function Home() {
     )
 }
 
-class AudioPlayer extends React.Component {
-    componentDidMount() {
-        this.playAudioWithFadeInOut(
-            this.props.src,
-            this.props.fadeInDuration,
-            this.props.fadeOutDuration,
-            this.props.startTime,
-            this.props.endTime
-        );
-    }
-
-    playAudioWithFadeInOut(src, fadeInDuration, fadeOutDuration, startTime, endTime) {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const AudioPlayer = ({ src, fadeInDuration, fadeOutDuration, startTime, endTime }) => {
+    const audioContext = useRef(null);
+    const audioRef = useRef(null);
+  
+    useEffect(() => {
+      const initAudio = async () => {
+        // Initialize AudioContext only once
+        if (!audioContext.current) {
+          audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
+        }
+  
+        // Create a new audio element for each playback
         const audio = new Audio();
-        const source = audioContext.createMediaElementSource(audio);
-        const gainNode = audioContext.createGain();
-
+        audioRef.current = audio;
+  
         // Set crossOrigin attribute for both audio and media source node
         audio.crossOrigin = 'anonymous';
-        source.crossOrigin = 'anonymous';
-
+  
+        // Create audio nodes
+        const source = audioContext.current.createMediaElementSource(audio);
+        const gainNode = audioContext.current.createGain();
+  
         source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
+        gainNode.connect(audioContext.current.destination);
+  
         // Set initial volume to 0
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-
+        gainNode.gain.setValueAtTime(0, audioContext.current.currentTime);
+  
         // Fade in
-        gainNode.gain.linearRampToValueAtTime(1, audioContext.currentTime + fadeInDuration);
-
+        gainNode.gain.linearRampToValueAtTime(1, audioContext.current.currentTime + fadeInDuration);
+  
         // Start playing at the specified start time
         audio.src = src;
         audio.currentTime = startTime;
-
+  
         // Schedule the end of playback
         audio.addEventListener('ended', () => {
-            // Fade out
-            gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + fadeOutDuration);
+          // Fade out
+          gainNode.gain.linearRampToValueAtTime(0, audioContext.current.currentTime + fadeOutDuration);
         });
-
+  
         // Play the audio
-        audio.play();
-
+        try {
+          await audio.play();
+        } catch (error) {
+          console.error('Error initiating playback:', error);
+        }
+  
         // Stop playback at the specified end time
         setTimeout(() => {
+          if (!audio.paused) {
             audio.pause();
             audio.currentTime = 0;
+          }
         }, (endTime - startTime) * 1000);
-        
-        // Save the audio object to the class instance for reference in componentWillUnmount
-        this.audio = audio;
-    }
-
-    componentWillUnmount() {
-        // Stop the audio when the component is unmounted
-        if (this.audio) {
-            this.audio.pause();
-            this.audio.currentTime = 0;
+      };
+  
+      // Call the function to initialize and play audio
+      initAudio();
+  
+      // Cleanup on component unmount
+      return () => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
         }
-    }
-
-    render() {
-        
-    }
-}
+      };
+    }, [src, fadeInDuration, fadeOutDuration, startTime, endTime]);
+  
+    return null; // Since this is a utility component
+  };
