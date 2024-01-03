@@ -29,7 +29,6 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
-                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -54,7 +53,6 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
-                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -117,7 +115,6 @@ export default function Home() {
             setGroup(x.data)
             var y=x.data
             SetAvailableSongs(songs.filter((x)=>{
-                return true
                 var res=true
                 y.songs.forEach(element => {
                     if (res===true) {
@@ -186,7 +183,6 @@ export default function Home() {
                 selectedKeys={selected_song}
                 onSelectionChange={(x)=>{
                     SetSelectedSong(songs.filter((x)=>{
-                        return true
                         var res=true
                         group.songs.forEach(element => {
                             if (res===true) {
@@ -199,7 +195,6 @@ export default function Home() {
                     }).reverse()[Number(x.values().next().value.split(".")[1])])
                 }}>
                     {songs.filter((x)=>{
-                        return true
                         var res=true
                         group.songs.forEach(element => {
                             if (res===true) {
@@ -229,7 +224,6 @@ export default function Home() {
                                 setGroup(x.data)
                                 var y=x
                                 SetAvailableSongs(songs.filter((x)=>{
-                                    return true
                                     var res=true
                                     y.data.songs.forEach(element => {
                                         if (res===true) {
@@ -313,7 +307,6 @@ export default function Home() {
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
-                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -335,7 +328,6 @@ export default function Home() {
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
-                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
