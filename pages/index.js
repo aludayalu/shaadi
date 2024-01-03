@@ -7,7 +7,9 @@ import data from "../props/data.json"
 function Group(name, index, setGroups) {
     return (
         <>
-        <Card css={{p:"$5", bgBlur:"$backgroundAlpha", border:"1px solid white", width:"400px"}} isHoverable isPressable>
+        <Card css={{p:"$5", bgBlur:"$backgroundAlpha", border:"1px solid white", width:"400px"}} isHoverable isPressable onClick={()=>{
+            window.location="/group?group="+name
+        }}>
             <Card.Header style={{width:"100%"}}>
                 <div style={{width:"50%"}}>
                     <Text className="vertical">{name}</Text>
