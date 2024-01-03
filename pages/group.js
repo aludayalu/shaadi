@@ -340,7 +340,7 @@ const AudioPlayer = (url, open, setOpen)=>{
             setOpen(false)
         }}
         >
-        <div className="wrapper">
+        <div className="wrapper" style={{padding:"5vw", width:"500px"}}>
             <audio src={url} controls></audio>
         </div>
         </Modal>
