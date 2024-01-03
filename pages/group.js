@@ -29,6 +29,7 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
+                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -38,7 +39,7 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                                     }
                                 })
                                 return res
-                            }))
+                            }).reverse())
                         })
                     })
                 }}><Text color="black">↓</Text></Button>
@@ -53,6 +54,7 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
+                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -62,7 +64,7 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                                     }
                                 })
                                 return res
-                            }))
+                            }).reverse())
                         })
                     })
                 }}><Text color="black">↑</Text></Button>
@@ -115,6 +117,7 @@ export default function Home() {
             setGroup(x.data)
             var y=x.data
             SetAvailableSongs(songs.filter((x)=>{
+                return true
                 var res=true
                 y.songs.forEach(element => {
                     if (res===true) {
@@ -124,7 +127,7 @@ export default function Home() {
                     }
                 })
                 return res
-            }))
+            }).reverse())
         })
     }
     if (JSON.stringify(group)!=="{}" && groupname!=="")
@@ -183,6 +186,7 @@ export default function Home() {
                 selectedKeys={selected_song}
                 onSelectionChange={(x)=>{
                     SetSelectedSong(songs.filter((x)=>{
+                        return true
                         var res=true
                         group.songs.forEach(element => {
                             if (res===true) {
@@ -192,9 +196,10 @@ export default function Home() {
                             }
                         })
                         return res
-                    })[Number(x.values().next().value.split(".")[1])])
+                    }).reverse()[Number(x.values().next().value.split(".")[1])])
                 }}>
                     {songs.filter((x)=>{
+                        return true
                         var res=true
                         group.songs.forEach(element => {
                             if (res===true) {
@@ -204,7 +209,7 @@ export default function Home() {
                             }
                         })
                         return res
-                    }).map((x)=>{
+                    }).reverse().map((x)=>{
                         return (
                             <Dropdown.Item>{x}</Dropdown.Item>
                         )
@@ -224,6 +229,7 @@ export default function Home() {
                                 setGroup(x.data)
                                 var y=x
                                 SetAvailableSongs(songs.filter((x)=>{
+                                    return true
                                     var res=true
                                     y.data.songs.forEach(element => {
                                         if (res===true) {
@@ -233,7 +239,7 @@ export default function Home() {
                                         }
                                     })
                                     return res
-                                }))
+                                }).reverse())
                             })
                         })
                     }}><Text color="black">Add Selected Song</Text></Button>}
@@ -307,6 +313,7 @@ export default function Home() {
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
+                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -316,7 +323,7 @@ export default function Home() {
                                     }
                                 })
                                 return res
-                            }))
+                            }).reverse())
                         })
                         setSaving(false)
                         SetEditingSong({visibility:false, song:{"name":"", "start":0, "stop":0, "fade_in":0, "fade_out":0}, playing: false})
@@ -328,6 +335,7 @@ export default function Home() {
                             setGroup(x.data)
                             var y=x.data
                             SetAvailableSongs(songs.filter((x)=>{
+                                return true
                                 var res=true
                                 y.songs.forEach(element => {
                                     if (res===true) {
@@ -337,7 +345,7 @@ export default function Home() {
                                     }
                                 })
                                 return res
-                            }))
+                            }).reverse())
                         })
                         SetEditingSong({visibility:false, song:{"name":"", "start":0, "stop":0, "fade_in":0, "fade_out":0}, playing: false})
                     })
