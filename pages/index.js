@@ -19,14 +19,14 @@ function Group(name, index, setGroups) {
                                 setGroups(x.data)
                             })
                         })
-                    }}><Text color="black">-</Text></Button> : ""}
+                    }}><Text color="black">↓</Text></Button> : ""}
                     {index!=0 ? <Button color={""} auto css={{margin:"5px", padding: "", float:"right"}} onClick={()=>{
                         axios.get(data.api_url+"/group_action?group="+name+"&action=plus").then(()=>{
                             axios.get(data.api_url+"/groups").then((x)=>{
                                 setGroups(x.data)
                             })
                         })
-                    }}><Text color="black">+</Text></Button> : ""}
+                    }}><Text color="black">↑</Text></Button> : ""}
                 </div>
             </Card.Header>
             <Button color={""} onClick={()=>{

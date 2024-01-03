@@ -41,7 +41,7 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                             }))
                         })
                     })
-                }}><Text color="black">-</Text></Button>
+                }}><Text color="black">↓</Text></Button>
                 </div> : ""}
                 {index!=0 ? <div style={{width:"15%"}}>
                     <Button color={""} auto css={{margin:"5px", padding: "", float:"right"}} onClick={()=>{
@@ -65,7 +65,7 @@ const Music = (name, index, currently_playing, SetCurrentlyPlaying, groupname, S
                             }))
                         })
                     })
-                }}><Text color="black">+</Text></Button>
+                }}><Text color="black">↑</Text></Button>
                 </div> : ""}
                 <div style={{width:"20%", float:"right"}}><Button bordered auto onClick={()=>{
                     if (index===-1) {
