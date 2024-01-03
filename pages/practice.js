@@ -67,18 +67,14 @@ export default function Home() {
         </Navbar>
         <Text h1 className="wrapper">{groupname}</Text>
         <div className="wrapper">
-        <Button onClick={()=>{
-            if (!practicing) {
-                setPracting(true)
-                setPlaying(true)
-            } else {
-                if (!playing) {
-                    setPlaying(true)
-                } else {
-                    window.location=window.location
-                }
-            }
-        }}><Text color="black">{playing ? "Pause" : "Start Practicing"}</Text></Button>
+        {playing ? <Loading></Loading> : ""}
+        {playing ? "" : <Button onClick={()=>{
+            setPlaying(true)
+            axios.get(data.api_url+"/export_group?group="+groupname).then(()=>{
+              setPlaying(false)
+              window.location=data.api_url+"/song?song="+encodeURIComponent("group_export"+groupname+".mp3")
+            })
+        }}><Text color="black">Export Group Song</Text></Button>}
         </div>
         {practicing ? 
         <AudioPlayer
