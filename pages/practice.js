@@ -197,4 +197,8 @@ class AudioPlayer extends React.Component {
           this.state.currentAudio.currentTime = 0;
         }
       }
+    
+    render () {
+      
+    }
 }

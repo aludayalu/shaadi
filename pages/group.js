@@ -158,6 +158,10 @@ export default function Home() {
                         window.location="/"
                     })
                 }} color={"error"}><Text>Delete Group</Text></Button>
+                <Spacer></Spacer>
+                <Button onClick={()=>{
+                    window.location="/practice?group="+groupname
+                }}><Text color="black">Practice</Text></Button>
             </div>
             <Modal
             open={add_song}
@@ -177,7 +181,17 @@ export default function Home() {
                 selectionMode="single"
                 selectedKeys={selected_song}
                 onSelectionChange={(x)=>{
-                    SetSelectedSong(available_songs[Number(x.values().next().value.split(".")[1])])
+                    SetSelectedSong(songs.filter((x)=>{
+                        var res=true
+                        group.songs.forEach(element => {
+                            if (res===true) {
+                                if (element.name===x) {
+                                    res=false
+                                }
+                            }
+                        })
+                        return res
+                    })[Number(x.values().next().value.split(".")[1])])
                 }}>
                     {songs.filter((x)=>{
                         var res=true
