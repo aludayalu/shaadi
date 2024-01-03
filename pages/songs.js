@@ -49,7 +49,7 @@ export default function Home() {
             <audio id="audio"></audio>
             <Navbar isBordered isCompact variant="sticky" css={{bgBlur: "#000000"}}>
                 <Navbar.Brand>
-                    <Text h3>Shaadi</Text>
+                    <Link href="/"><Text h3>Shaadi</Text></Link>
                 </Navbar.Brand>
                 <Navbar.Content activeColor="secondary">
                 <Navbar.Item><Button auto bordered color=""><Link color="text" href="/">Home</Link></Button></Navbar.Item>

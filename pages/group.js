@@ -137,7 +137,7 @@ export default function Home() {
             <audio id="audio2"></audio>
             <Navbar isBordered isCompact variant="sticky" css={{bgBlur: "#000000"}}>
                 <Navbar.Brand>
-                    <Text h3>Shaadi</Text>
+                    <Link href="/"><Text h3>Shaadi</Text></Link>
                 </Navbar.Brand>
                 <Navbar.Content activeColor="secondary">
                 <Navbar.Item><Button auto bordered color=""><Link color="text" href="/songs">Songs</Link></Button></Navbar.Item>
@@ -169,6 +169,7 @@ export default function Home() {
                 SetAddSong(false)
 
             }}
+            width="600px"
             >
             <Modal.Header>
                 <Text h2>Add Song</Text>
@@ -192,7 +193,6 @@ export default function Home() {
                         })
                         return res
                     })[Number(x.values().next().value.split(".")[1])])
-                    
                 }}>
                     {songs.filter((x)=>{
                         var res=true
@@ -236,8 +236,13 @@ export default function Home() {
                                 }))
                             })
                         })
-                    }}><Text color="black">Add Song</Text></Button>}
+                    }}><Text color="black">Add Selected Song</Text></Button>}
                     {uploading_song ? <Loading></Loading> : ""}
+                </div>
+                <div className="wrapper">
+                    <Button onClick={()=>{
+                        window.location="/songs"
+                    }}><Text color="black">Upload New Song</Text></Button>
                 </div>
             </Modal.Body>
             </Modal>
