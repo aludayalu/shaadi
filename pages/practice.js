@@ -175,6 +175,7 @@ class AudioPlayer extends React.Component {
         setTimeout(() => {
           audio.pause();
           audio.currentTime = 0;
+          this.playNextSong()
         }, (endTime - startTime) * 1000);
     
         this.setState({ currentAudio: audio });
