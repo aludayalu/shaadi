@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import axios from "axios"
 import data from "../props/data.json"
 
-function Group(name, index, setGroups) {
+function Group(name, index, setGroups, current_group) {
     return (
         <>
-        <Card css={{p:"$5", bgBlur:"$backgroundAlpha", border:"1px solid white", width:"400px"}} isHoverable isPressable onClick={()=>{
+        <Card css={{p:"$5", bgBlur:"$backgroundAlpha", border:"1px solid "+(current_group===name ? "#17c964" : "white"), width:"400px"}} isHoverable isPressable onClick={()=>{
             window.location="/group?group="+name
         }}>
             <Card.Header style={{width:"100%"}}>
@@ -31,10 +31,10 @@ function Group(name, index, setGroups) {
                     }}><Text color="black">↑</Text></Button> : ""}
                 </div>
             </Card.Header>
-            <Button color={""} onClick={()=>{
+            <Button color={(current_group===name ? "success" : "")} onClick={()=>{
                 window.location="/group?group="+name
             }}>
-                <Text color="black">Click to view more details</Text>
+                <Text color={(current_group===name ? "white" : "black")}>Click to view more details</Text>
             </Button>
         </Card>
         </>
@@ -46,11 +46,20 @@ export default function Home() {
     const [adding_group, setAddingGroup]=useState(false)
     const [groups, setGroups]=useState([])
     const [first, setFirst]=useState(true)
+    const [current_group, setcurrentGroup]=useState("")
     if (first) {
         axios.get(data.api_url+"/groups").then((x)=>{
             setGroups(x.data)
         })
         setFirst(false)
+        axios.get(data.api_url+"/current_group").then((x)=>{
+            setcurrentGroup(x.data)
+        })
+        setInterval(()=>{
+            axios.get(data.api_url+"/current_group").then((x)=>{
+                setcurrentGroup(x.data)
+            })
+        }, 5000)
     }
     return (
         <>
@@ -68,7 +77,7 @@ export default function Home() {
             </Navbar>
 
             <Text h2 className="wrapper">Groups</Text>
-            <Text className="wrapper">Current Playing:</Text>
+            <Text className="wrapper">Currently Playing: {current_group}</Text>
             <Spacer></Spacer>
             <div className="wrapper">
                 <Button color={""} onClick={()=>{
@@ -84,7 +93,7 @@ export default function Home() {
                     }
                     return (
                         <>
-                        {Group(x, index, setGroups)}
+                        {Group(x, index, setGroups, current_group)}
                         <Spacer></Spacer>
                         </>
                     )
