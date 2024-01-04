@@ -11,6 +11,7 @@ function Group(name, index, setGroups, current_group) {
             window.location="/group?group="+name
         }}>
             <Card.Header style={{width:"100%"}}>
+                <Text b>{index+1}. </Text>
                 <div style={{width:"50%"}}>
                     <Text className="vertical">{name}</Text>
                 </div>
